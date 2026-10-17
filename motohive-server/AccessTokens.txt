@@ -1,8 +1,0 @@
-"accessToken": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJkaXB1QG1vdG9oaXZlLmNvbSIsInVzZXJJZCI6MSwicm9sZXMiOlsiQlVZRVIiXSwiaWF0IjoxNzgxMjYwMDgxLCJleHAiOjE3ODEyNjM2ODF9.kxrK2qYAwcPbqRvLjJB30zxl6aQKoY9POYy92RE3Ad5PWJTibwyy8jAE4lJvSXlU",
-  "refreshToken": "c12752cf-1bfa-416c-94f1-fa4fe68ed2dd",
-  "tokenType": "Bearer",
-  "userId": 1,
-  "email": "dipu@motohive.com",
-  "roles": [
-    "BUYER"
-  ]

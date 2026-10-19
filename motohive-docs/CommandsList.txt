@@ -1,7 +1,0 @@
-mvn clean install -DskipTests
-
-## H2 DB
-URL:      http://localhost:8084/h2-console
-JDBC URL: jdbc:h2:mem:motohive_payments
-Username: sa
-Password: (leave blank)

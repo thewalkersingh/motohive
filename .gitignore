@@ -1,0 +1,41 @@
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+*.iml
+.vscode/
+*.code-workspace
+
+# ---- secrets / env ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ---- Java / Maven (motohive-api) ----
+motohive-api/target/
+*.class
+*.jar
+*.war
+.mvn/wrapper/maven-wrapper.jar
+!motohive-api/.mvn/wrapper/maven-wrapper.properties
+
+# ---- Node / Vite (motohive-web) ----
+motohive-web/node_modules/
+motohive-web/dist/
+motohive-web/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---- Local infra ----
+infra/.pgdata/
+infra/*.local.yml
+
+# ---- Logs / temp ----
+*.log
+logs/
+tmp/

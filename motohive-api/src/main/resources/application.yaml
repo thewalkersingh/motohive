@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: motohive-api
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/motohive_db}
+    username: ${DB_USER:postgres }
+    password: ${DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: 10
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate      # schema owned by Flyway, not Hibernate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Kolkata
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+
+server:
+  port: ${SERVER_PORT:8080}
+
+# Actuators
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+
+motohive:
+  timezone: Asia/Kolkata
+  money:
+    currency: INR
+
+  # Business defaults — tunable, not hardcoded in code
+  inspection:
+    certificate-validity-days: 45
+    rejection-cooldown-days: 21
+  reservation:
+    window-days: 5
+  buyout:
+    offer-window-days: 7
+  viewing:
+    acknowledgement-sla-minutes: 10
+  commission:
+    platform-cut-generic-pct: 5.0
+    dealer-commission-pct: 2.0
+    inspector-success-bonus-pct: 1.0
+  segment:
+    min-engine-cc: 200

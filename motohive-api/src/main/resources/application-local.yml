@@ -1,4 +1,9 @@
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/motohive_db
+    # Trust auth locally — no username/password
+    username:
+    password:
   jpa:
     show-sql: true
     properties:
@@ -7,5 +12,5 @@ spring:
 
 logging:
   level:
-    com.motohive: DEBUG
+    com.motohive.motohiveapi: DEBUG
     org.hibernate.SQL: DEBUG

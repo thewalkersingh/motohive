@@ -1,7 +1,7 @@
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USER}
+    url: jdbc:mysql://${DB_HOST}:${DB_PORT}/${DB_NAME}?useSSL=true&requireSSL=true&serverTimezone=UTC
+    username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     hikari:
       maximum-pool-size: 5          # Render starter Postgres is small; don't exhaust connections

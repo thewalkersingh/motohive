@@ -1,0 +1,288 @@
+Good — slow and deliberate is the right pace for something that has to earn "trusted" status. And yes, referencing the Rentrix rhythm is useful: same discipline, **schema first, vertical slice second, logic last**, with review checkpoints between each.
+
+Before I start producing artifacts, one honest thing worth saying: I don't have persistent memory across sessions, so **this conversation is our design record**. If you start a fresh chat later, paste the last locked artifact back in. Within this thread we're fine.
+
+**Proposed sequence for Motohive "initials" (each step ends with you reviewing before the next):**
+
+**Step 0 — Project bootstrap (today)**
+- Repo layout (backend `motohive-api`, frontend `motohive-web`, shared `docs/`)
+- Spring Boot 3 + Java 21 + PostgreSQL + Flyway, package skeleton exactly as agreed
+- React (Vite) scaffold, routing shell, API client stub
+- `.env` strategy, local `docker-compose` (Postgres)
+- `README` with the locked design summary pasted in (so the repo carries our decisions, not just this chat)
+
+**Step 1 — DDL baseline (V1 migration)**
+- All enums as Postgres types or check-constrained varchars (your call, I'd say check-constrained varchar for evolvability)
+- Tables in dependency order: `user` → `provider` (dealer/inspector) → `vehicle` (+ subtype) → `inspection` (+ checklist template, certificate) → `listing` (+ price history, featured, provenance) → `buyout` → `reservation` (+ waitlist, token ledger) → `viewing` → `transaction` (+ payout ledger) → `rating` → `state_machine_definition` + `state_transition` + `audit_log` → `commission_config`, `segment_policy`, `notification_template`, `announcement`
+- Constraints: FKs, uniques (e.g. one active cert per vehicle, one active reservation per listing), partial indexes (active listings, pending offers), money as `numeric(14,2)`
+- No JPA entities yet — **DDL reviewed in raw SQL** first, so the model is validated before ORM mappings bake mistakes in.
+
+**Step 2 — Domain + state machine (typed, no logic)**
+- Enums, `StateMachine`/`Guard`/`SideEffect` interfaces, `state_machine_definition` seeding for `VehicleListingMachine` and `ReservationMachine`, audit-as-global-effect wired but inert.
+
+**Step 3 — First vertical slice (the trust spine)**
+- `identity` (auth+roles) → `provider` → `vehicle` → `inspection` request/assign/report/certify, with admin assignment suggestion. Ends with: an admin can take a vehicle from REQUESTED to CERTIFIED and see the audit trail.
+
+**Step 4 — Listing + public browse** → Step 5 — buyout/reservation/viewing → Step 6 — transaction/payout/rating → Step 7 — emails/notifications → Step 8 — React surfaces for each slice as it lands.
+
+---
+
+**Three small decisions to unblock Step 0/1, then I start:**
+
+1. **Enums in DB** — check-constrained `varchar` (my rec, easy to add values) vs native Postgres `enum` type (stricter, painful to alter)? 
+2. **IDs** — `UUID` everywhere (my rec: better for public-facing listing URLs, no enumeration) vs `bigserial`? And if UUID, `gen_random_uuid()` in DB or generated in app?
+3. **Bootstrap deliverable format** — do you want me to output (a) the full **folder tree + file contents** for you to paste, or (b) **step-by-step instructions + file skeletons** you type yourself? Given "not in a hurry," I lean (b) — you internalize the structure and catch anything off — but tell me your preference.
+
+Answer those three, and I'll produce **Step 0 bootstrap** first: repo tree, `pom.xml`, `application.yml`, docker-compose, package skeleton with empty modules, and the README design summary. Then we review before Step 1 (the DDL).
+
+Good — option (b), and you've defined the repo shape. Let me lock the folder structure cleanly first (your sketch had a couple of typos and empty slots), then give you **Step 0, part 1**: roadmap, README, `.gitignore`, with clear instructions. `pom.xml` + `application.yml` + docker-compose come in part 2 so each piece gets proper review.
+
+---
+
+## Repo structure (final — fill your empty slots with this)
+
+```
+motohive/                          # monorepo root (git root)
+├── motohive-api/                  # Spring Boot backend
+├── motohive-web/                  # React frontend (Vite)
+├── motohive-docs/                 # design + roadmap + ADRs
+│   ├── roadmap.md
+│   ├── design/                    # locked design artifacts (state machines, ER, money flow)
+│   └── adr/                       # architecture decision records (numbered)
+├── infra/                         # docker-compose, local dev tooling
+│   └── docker-compose.yml
+├── .gitignore
+└── README.md
+```
+
+Rationale for the two additions (`infra/`, `motohive-docs/design` + `adr/`): local Postgres lives in `infra/` so it's not mixed into either app; and the **locked design artifacts from this thread go into `motohive-docs/design/` as files** — that's how the repo remembers decisions when a chat doesn't. The `adr/` folder is where each big call (check-constrained enums, config-driven state machine, capability model) gets a one-page "context / decision / consequence" record. Cheap now, invaluable in six months.
+
+Name the backend folder **`motohive-api`** (clearer than `server` when you later add workers/jobs).
+
+---
+
+## Step 0, Part 1 — files to create
+
+Create these three files at the repo root and in `motohive-docs/`. Type them yourself (option b) — the content below is the exact reference.
+
+### 1. `.gitignore` (repo root)
+
+```gitignore
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+*.iml
+.vscode/
+*.code-workspace
+
+# ---- secrets / env ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ---- Java / Maven (motohive-api) ----
+motohive-api/target/
+*.class
+*.jar
+*.war
+.mvn/wrapper/maven-wrapper.jar
+!motohive-api/.mvn/wrapper/maven-wrapper.properties
+
+# ---- Node / Vite (motohive-web) ----
+motohive-web/node_modules/
+motohive-web/dist/
+motohive-web/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---- Local infra ----
+infra/.pgdata/
+infra/*.local.yml
+
+# ---- Logs / temp ----
+*.log
+logs/
+tmp/
+```
+
+### 2. `README.md` (repo root)
+
+```markdown
+# Motohive
+
+A trusted marketplace for **premium used two-wheelers (>200cc)**, starting with
+verified listings for high-CC bikes and expanding to cars and other vehicles.
+
+Motohive is a **platform**, not a reseller. Vehicles are listed by dealers or by
+individual sellers whose bikes pass a platform-arranged inspection and certification.
+
+---
+
+## Long-term vision
+
+| Phase | Scope |
+|-------|-------|
+| 1 (now) | Premium two-wheeler listings, verified inspection, viewing, reservation |
+| 2 | Garage / mechanic services, parts & products marketplace |
+| 3 | RTO & document services (transfer, registration, renewal) |
+
+The data model and state-machine engine are designed so Phase 2/3 add
+**capabilities and workflow definitions**, not new silos.
+
+---
+
+## Repository layout
+
+```
+motohive/
+├── motohive-api/      Spring Boot 3 (Java 21) backend
+├── motohive-web/      React (Vite) frontend
+├── motohive-docs/     Design docs, roadmap, ADRs
+│   ├── design/        Locked design artifacts (ER, state machines, money flow)
+│   └── adr/           Architecture Decision Records
+├── infra/             Local dev infrastructure (docker-compose, Postgres)
+└── README.md
+```
+
+---
+
+## Tech stack
+
+- **Backend:** Spring Boot 3, Java 21, PostgreSQL, Flyway
+- **Frontend:** React (Vite), TypeScript
+- **Auth:** JWT (access + refresh); OTP for sellers/buyers, password for admin (TBD per ADR)
+- **Local dev:** Docker Compose (Postgres)
+
+---
+
+## Core concepts (short version — full detail in motohive-docs/design)
+
+- **Accounts hold roles:** `BUYER`, `SELLER`, `INSPECTOR`, `DEALER`, `ADMIN`.
+  One account may hold multiple roles. Permissions are role-scoped.
+- **Providers** (dealers, inspectors, later garages) carry **capabilities**
+  (`SELLS_VEHICLES`, `INSPECTS`, later `SERVICES`, `HANDLES_DOCS`).
+- **Generic-seller flow:** REQUESTED → ASSIGNED → INSPECTED → CERTIFIED →
+  (OFFERED_TO_DEALERS) → LISTED → RESERVED → SOLD, with REJECTED and EXPIRED.
+- **Dealer listings** are self-managed; the dealer is solely accountable and
+  earns commission after a confirmed sale.
+- **Inspection payout:** base fee paid by the platform on inspection; success
+  bonus paid on sale (or dealer buyout).
+- **Reservation:** token money held by the platform (escrow); exclusive window
+  with a waitlist, no auto-break.
+- **State changes are config-driven** and audited on every transition.
+
+---
+
+## Getting started
+
+See `motohive-docs/roadmap.md` for build sequence.
+Local setup instructions are added as each part of the stack lands
+(backend, frontend, database).
+
+---
+
+## Status
+
+Early bootstrap. No application logic yet — schema and project skeleton first.
+```
+
+### 3. `motohive-docs/roadmap.md`
+
+```markdown
+# Motohive — Build Roadmap
+
+Discipline: **schema first, vertical slice second, logic last.**
+Each step ends with a review checkpoint before the next begins.
+
+---
+
+## Step 0 — Project bootstrap  ← current
+
+- Repo layout (monorepo)
+- `.gitignore`, `README.md`, this roadmap
+- Spring Boot skeleton (`motohive-api`) — package tree as agreed, no logic
+- React skeleton (`motohive-web`)
+- `docker-compose` with Postgres
+- `application.yml` profiles (local, dev, prod placeholders)
+- Locked design artifacts copied into `motohive-docs/design/`
+
+**Exit criteria:** apps boot, Postgres runs locally, folder structure matches design.
+
+---
+
+## Step 1 — DDL baseline (Flyway V1)
+
+- All enums as check-constrained `varchar`
+- UUID primary keys (`gen_random_uuid()` in DB)
+- Tables in dependency order:
+  `user` → `provider` (dealer/inspector) → `vehicle` (+ subtype) →
+  `inspection` (+ checklist template/version, certificate) →
+  `listing` (+ price history, featured, provenance) → `buyout` →
+  `reservation` (+ waitlist, token ledger) → `viewing` →
+  `transaction` (+ payout ledger) → `rating` →
+  `state_machine_definition`, `state_transition`, `audit_log` →
+  `commission_config`, `segment_policy`, `notification_template`, `announcement`
+- Constraints, uniques, partial indexes; money as `numeric(14,2)`
+
+**Exit criteria:** raw SQL review passes; no JPA mappings yet.
+
+---
+
+## Step 2 — Domain enums + state machine (typed, inert)
+
+- Enums, `StateMachine` / `Guard` / `SideEffect` interfaces
+- `StateMachineRegistry`
+- Seed definitions for `VehicleListingMachine`, `ReservationMachine`
+- Audit as global side-effect (wired but inert)
+
+**Exit criteria:** a test can load a machine definition and list legal transitions.
+
+---
+
+## Step 3 — First vertical slice: the trust spine
+
+- `identity` (auth + roles), `provider`, `vehicle`
+- `inspection`: request → assign (proximity-suggested) → report → certify/reject
+- Admin surfaces for assignment and certification
+- Audit trail visible end-to-end
+
+**Exit criteria:** a vehicle moves REQUESTED → CERTIFIED with full audit trail.
+
+---
+
+## Step 4 — Listing + public browse
+## Step 5 — Buyout, reservation, viewing
+## Step 6 — Transaction, payout ledger, rating
+## Step 7 — Email notifications + templates
+## Step 8 — React surfaces for each shipped slice
+
+(Deliberately not detailed yet — expanded as each approaches.)
+
+---
+
+## Decisions locked (see motohive-docs/adr)
+
+- Monorepo, `motohive-api` naming
+- Check-constrained varchar enums
+- UUID PKs, DB-generated
+- Config-driven state machine (reusable for Phase 3 document workflows)
+- Capability-based provider permissions (Phase 2/3 extension point)
+- Postgres + Flyway
+```
+
+---
+
+## What to do now
+
+1. Create the folder tree shown above (empty `motohive-api/`, `motohive-web/`, `motohive-docs/design/`, `motohive-docs/adr/`, `infra/`).
+2. Create the three files with the content above.
+3. `git init` if not already, commit as `chore: bootstrap repo skeleton, readme, roadmap`.
+4. Tell me when done — and answer one small thing I noticed we never pinned: **TypeScript for the frontend, yes?** (I wrote the README assuming yes; it's the sensible default for a project of this size, but confirm.)
+
+Once you confirm, I'll produce **Step 0, Part 2**: `motohive-api/pom.xml`, `application.yml` (+ profile files), `infra/docker-compose.yml`, and the empty package skeleton with `MotohiveApplication` — then we review before the React side and before Step 1's DDL.

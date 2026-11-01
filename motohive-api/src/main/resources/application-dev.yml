@@ -2,8 +2,11 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/motohive_db
     # Trust auth locally — no username/password
-    username:
-    password:
+    username: postgres
+    password: admin
+    hikari:
+      maximum-pool-size: 10
+
   jpa:
     show-sql: true
     properties:

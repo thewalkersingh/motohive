@@ -81,3 +81,120 @@ body {
     font-size: 0.85rem;
     color: #888;
 }
+
+/* --- Listing Grid & Card Styles --- */
+.listing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    padding: 1rem 0;
+}
+
+.listing-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #eaeaea;
+}
+
+.listing-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.listing-image-container {
+    position: relative;
+    height: 200px;
+    background-color: #f0f0f0;
+}
+
+.listing-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.condition-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: white;
+}
+
+.condition-badge.like_new { background-color: #2e7d32; }
+.condition-badge.good { background-color: #1976d2; }
+.condition-badge.fair { background-color: #f57c00; }
+.condition-badge.new { background-color: #d32f2f; }
+
+.listing-details {
+    padding: 1.25rem;
+}
+
+.listing-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+    color: #213547;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.listing-price {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #d32f2f;
+    margin: 0 0 1rem 0;
+}
+
+.listing-specs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.spec-item {
+    font-size: 0.85rem;
+    color: #555;
+    font-weight: 500;
+}
+
+.listing-seller {
+    margin-bottom: 0.75rem;
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.listing-status {
+    margin-top: 0.5rem;
+}
+
+.status-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.status-tag.pending { background-color: #fff3e0; color: #e65100; }
+.status-tag.certified { background-color: #e8f5e9; color: #2e7d32; }
+.status-tag.rejected { background-color: #ffebee; color: #c62828; }
+
+.loading-state, .error-state, .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.error-state { color: #c62828; }

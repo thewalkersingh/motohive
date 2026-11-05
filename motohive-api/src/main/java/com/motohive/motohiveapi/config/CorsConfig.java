@@ -16,7 +16,8 @@ public class CorsConfig {
 			@Override
 			public void addCorsMappings(@NonNull CorsRegistry registry) {
 				registry.addMapping("/**")
-						  .allowedOrigins("http://localhost:5173","http://localhost:8080/swagger-ui") // Vite default port
+						  .allowedOrigins("http://localhost:5173", "http://localhost:8080") // Vite default
+						  // port
 						  .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 						  .allowedHeaders("*")
 						  .allowCredentials(true);

@@ -1,0 +1,30 @@
+package com.motohive.motohiveapi.controller;
+
+import com.motohive.motohiveapi.dto.UserRequest;
+import com.motohive.motohiveapi.dto.UserResponse;
+import com.motohive.motohiveapi.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/v1/users")
+@RequiredArgsConstructor
+public class UserController {
+	
+	private final UserService userService;
+	
+	@PostMapping
+	public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest request) {
+		return ResponseEntity.ok(userService.createUser(request));
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<UserResponse> getUser(@PathVariable UUID id) {
+		return ResponseEntity.ok(userService.getUserById(id));
+	}
+	
+}

@@ -1,17 +1,20 @@
 package com.motohive.motohiveapi.service;
 
+import com.motohive.motohiveapi.dto.ListingSearchCriteria;
 import com.motohive.motohiveapi.dto.VehicleListingRequest;
 import com.motohive.motohiveapi.dto.VehicleListingResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface VehicleListingService {
 	
 	VehicleListingResponse createListing(VehicleListingRequest request);
 	
-	List<VehicleListingResponse> getAllListings();
-	
 	VehicleListingResponse getListingById(UUID id);
+	
+	// New method replacing getAllListings
+	Page<VehicleListingResponse> searchListings(ListingSearchCriteria criteria, Pageable pageable);
 	
 }

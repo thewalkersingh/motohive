@@ -1,13 +1,17 @@
 package com.motohive.motohiveapi.controller;
 
+import com.motohive.motohiveapi.dto.ListingSearchCriteria;
+import com.motohive.motohiveapi.dto.PageResponse;
 import com.motohive.motohiveapi.dto.VehicleListingRequest;
 import com.motohive.motohiveapi.dto.VehicleListingResponse;
 import com.motohive.motohiveapi.service.VehicleListingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,14 +26,29 @@ public class VehicleListingController {
 		return ResponseEntity.ok(listingService.createListing(request));
 	}
 	
-	@GetMapping
-	public ResponseEntity<List<VehicleListingResponse>> getAllListings() {
-		return ResponseEntity.ok(listingService.getAllListings());
-	}
-	
 	@GetMapping("/{id}")
 	public ResponseEntity<VehicleListingResponse> getListingById(@PathVariable UUID id) {
 		return ResponseEntity.ok(listingService.getListingById(id));
+	}
+	
+	// New Advanced Search Endpoint
+	@GetMapping
+	public ResponseEntity<PageResponse<VehicleListingResponse>> searchListings(
+		@ModelAttribute ListingSearchCriteria criteria,
+		@PageableDefault(size = 10) Pageable pageable) {
+		
+		Page<VehicleListingResponse> page = listingService.searchListings(criteria, pageable);
+		
+		PageResponse<VehicleListingResponse> response = new PageResponse<>(
+			page.getContent(),
+			page.getNumber(),
+			page.getSize(),
+			page.getTotalElements(),
+			page.getTotalPages(),
+			page.isLast()
+		);
+		
+		return ResponseEntity.ok(response);
 	}
 	
 }

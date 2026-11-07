@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # --- Database ---
+  postgres:
+    image: postgres:16-alpine
+    container_name: motohive_postgres
+    environment:
+      POSTGRES_DB: motohive_db
+      POSTGRES_USER: motohive
+      POSTGRES_PASSWORD: motohive
+    ports:
+      - "5433:5432" # Exposed to host for local debugging if needed
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - motohive_network
+
+  # --- Backend API ---
+  api:
+    build:
+      context: ../motohive-api
+      dockerfile: Dockerfile
+    container_name: motohive_api
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      DB_URL: jdbc:postgresql://postgres:5432/motohive_db
+      DB_USER: motohive
+      DB_PASSWORD: motohive
+    depends_on:
+      - postgres
+    networks:
+      - motohive_network
+
+  # --- Frontend Web ---
+  web:
+    build:
+      context: ../motohive-web
+      dockerfile: Dockerfile
+    container_name: motohive_web
+    ports:
+      - "3000:80" # Map host port 3000 to Nginx port 80
+    depends_on:
+      - api
+    networks:
+      - motohive_network
+
+volumes:
+  postgres_data:
+
+networks:
+  motohive_network:
+    driver: bridge

@@ -13,6 +13,14 @@ spring:
       hibernate:
         format_sql: false
 
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:thewalkersingh}
+  api-key: ${CLOUDINARY_API_KEY:918414787697938}
+  api-secret: ${CLOUDINARY_API_SECRET:UN8fi-IkAT_Mux19J8V5s7qb7xE}
+  upload-folder: motohive/listings
+
+
 logging:
   level:
     com.motohive.motohiveapi: DEBUG

@@ -13,14 +13,12 @@ import com.motohive.motohiveapi.mapper.VehicleMapper;
 import com.motohive.motohiveapi.repository.UserRepository;
 import com.motohive.motohiveapi.repository.VehicleListingRepository;
 import com.motohive.motohiveapi.service.VehicleListingService;
-import com.motohive.motohiveapi.specification.ListingSpecification;
+import com.motohive.motohiveapi.util.ListingSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,35 +30,25 @@ public class VehicleListingServiceImpl implements VehicleListingService {
 	@Transactional
 	public VehicleListingResponse createListing(VehicleListingRequest request) {
 		// ... (Keep your existing createListing logic exactly as it is) ...
-		User seller = userRepository.findById(request.sellerId())
-											 .orElseThrow(() -> new RuntimeException("Seller not found"));
+		User seller =
+			userRepository.findById(request.sellerId()).orElseThrow(() -> new RuntimeException("Seller not found"));
 		
-		VehicleListing listing = VehicleListing.builder()
-															.seller(seller)
-															.title(request.title())
-															.description(request.description())
-															.price(request.price())
-															.make(request.make())
-															.model(request.model())
-															.yearOfManufacture(request.yearOfManufacture())
-															.mileageKm(request.mileageKm())
-															.engineCc(request.engineCc())
-															.condition(request.condition())
-															.listingStatus(
-																ListingStatus.DRAFT) // Created as DRAFT, we will update to ACTIVE for
-															// testing
-															.inspectionStatus(InspectionStatus.PENDING)
-															.build();
+		VehicleListing listing =
+			VehicleListing.builder().seller(seller).title(request.title()).description(request.description())
+							  .price(request.price()).make(request.make()).model(request.model())
+							  .yearOfManufacture(request.yearOfManufacture()).mileageKm(request.mileageKm())
+							  .engineCc(request.engineCc()).condition(request.condition())
+							  .listingStatus(ListingStatus.DRAFT) // Created as DRAFT, we will
+							  // update to ACTIVE for
+							  // testing
+							  .inspectionStatus(InspectionStatus.PENDING).build();
 		
 		if (request.media() != null) {
 			for (ListingMediaRequest mediaReq : request.media()) {
-				ListingMedia media = ListingMedia.builder()
-															.url(mediaReq.url())
-															.mediaType(mediaReq.mediaType())
+				ListingMedia media = ListingMedia.builder().url(mediaReq.url()).mediaType(mediaReq.mediaType())
 															.isPrimary(mediaReq.isPrimary() != null && mediaReq.isPrimary())
 															.displayOrder(
-																mediaReq.displayOrder() != null ? mediaReq.displayOrder() : 0)
-															.build();
+																mediaReq.displayOrder() != null ? mediaReq.displayOrder() : 0).build();
 				listing.addMedia(media);
 			}
 		}
@@ -69,9 +57,9 @@ public class VehicleListingServiceImpl implements VehicleListingService {
 	}
 	
 	@Transactional(readOnly = true)
-	public VehicleListingResponse getListingById(UUID id) {
-		VehicleListing listing = listingRepository.findById(id)
-																.orElseThrow(() -> new RuntimeException("Listing not found"));
+	public VehicleListingResponse getListingById(Long id) {
+		VehicleListing listing =
+			listingRepository.findById(id).orElseThrow(() -> new RuntimeException("Listing not " + "found"));
 		return VehicleMapper.mapToResponse(listing);
 	}
 	

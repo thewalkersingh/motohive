@@ -12,8 +12,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
-
 @RestController
 @RequestMapping("/api/v1/listings")
 @RequiredArgsConstructor
@@ -27,7 +25,7 @@ public class VehicleListingController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<VehicleListingResponse> getListingById(@PathVariable UUID id) {
+	public ResponseEntity<VehicleListingResponse> getListingById(@PathVariable Long id) {
 		return ResponseEntity.ok(listingService.getListingById(id));
 	}
 	

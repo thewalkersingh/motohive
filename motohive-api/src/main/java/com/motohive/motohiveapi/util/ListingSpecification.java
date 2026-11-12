@@ -1,4 +1,4 @@
-package com.motohive.motohiveapi.specification;
+package com.motohive.motohiveapi.util;
 
 import com.motohive.motohiveapi.domain.entity.VehicleListing;
 import com.motohive.motohiveapi.domain.enums.ListingStatus;

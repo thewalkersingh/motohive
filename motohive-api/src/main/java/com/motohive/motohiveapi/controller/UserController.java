@@ -4,11 +4,8 @@ import com.motohive.motohiveapi.dto.UserRequest;
 import com.motohive.motohiveapi.dto.UserResponse;
 import com.motohive.motohiveapi.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -23,7 +20,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<UserResponse> getUser(@PathVariable UUID id) {
+	public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
 		return ResponseEntity.ok(userService.getUserById(id));
 	}
 	

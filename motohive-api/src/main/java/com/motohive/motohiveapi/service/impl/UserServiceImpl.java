@@ -9,8 +9,6 @@ import com.motohive.motohiveapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -27,7 +25,7 @@ public class UserServiceImpl implements UserService {
 		return UserMapper.mapToResponse(saved);
 	}
 	
-	public UserResponse getUserById(UUID id) {
+	public UserResponse getUserById(Long id) {
 		return UserMapper.mapToResponse(userRepository.findById(id)
 																	 .orElseThrow(() -> new RuntimeException("User not found")));
 	}

@@ -6,10 +6,9 @@ import com.motohive.motohiveapi.domain.enums.VehicleCondition;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 public record VehicleListingResponse(
-	UUID id,
+	Long id,
 	String title,
 	BigDecimal price,
 	String make,
@@ -22,4 +21,6 @@ public record VehicleListingResponse(
 	InspectionStatus inspectionStatus,
 	UserResponse seller,
 	List<ListingMediaResponse> media
-) {}
+) {
+
+}

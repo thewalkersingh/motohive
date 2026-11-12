@@ -6,13 +6,11 @@ import com.motohive.motohiveapi.dto.VehicleListingResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.UUID;
-
 public interface VehicleListingService {
 	
 	VehicleListingResponse createListing(VehicleListingRequest request);
 	
-	VehicleListingResponse getListingById(UUID id);
+	VehicleListingResponse getListingById(Long id);
 	
 	// New method replacing getAllListings
 	Page<VehicleListingResponse> searchListings(ListingSearchCriteria criteria, Pageable pageable);

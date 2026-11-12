@@ -361,3 +361,156 @@ body {
     font-size: 0.8rem;
     margin-top: 0.25rem;
 }
+
+/* --- Navigation --- */
+.app-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.nav-btn {
+    padding: 0.6rem 1.5rem;
+    border: 1px solid #d32f2f;
+    background: white;
+    color: #d32f2f;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.nav-btn.active, .nav-btn:hover {
+    background: #d32f2f;
+    color: white;
+}
+
+/* --- Create Listing Form --- */
+.create-listing-form {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.create-listing-form h2 {
+    color: #213547;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 0.5rem;
+}
+
+.form-section {
+    margin-bottom: 2rem;
+}
+
+.form-section h3 {
+    color: #555;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.create-listing-form input,
+.create-listing-form select,
+.create-listing-form textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+.create-listing-form textarea {
+    resize: vertical;
+}
+
+.upload-grid {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.media-preview ul {
+    list-style: none;
+    padding: 0;
+}
+
+.media-preview li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: #f9f9f9;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.media-type-badge {
+    background: #213547;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+.media-url {
+    flex-grow: 1;
+    color: #666;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.btn-remove {
+    background: none;
+    border: none;
+    color: #c62828;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 1rem;
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-submit:hover:not(:disabled) {
+    background-color: #b71c1c;
+}
+
+.btn-submit:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+}
+
+.form-error {
+    background: #ffebee;
+    color: #c62828;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    text-align: center;
+}

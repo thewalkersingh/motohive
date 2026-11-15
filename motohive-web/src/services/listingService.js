@@ -1,11 +1,9 @@
-// src/services/listingService.js
-
 const API_BASE = '/api/v1';
 
 export const listingService = {
    // New method for advanced search and pagination
    searchListings: async (filters = {}, page = 0, size = 6) => {
-      const params = new URLSearchParams({ page, size });
+      const params = new URLSearchParams({page, size});
 
       // Append filters only if they have a value
       if (filters.keyword) params.append('keyword', filters.keyword);

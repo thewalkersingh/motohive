@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface VehicleListingService {
 	
-	VehicleListingResponse createListing(VehicleListingRequest request);
+	VehicleListingResponse createListing(VehicleListingRequest request, Long id);
 	
 	VehicleListingResponse getListingById(Long id);
 	

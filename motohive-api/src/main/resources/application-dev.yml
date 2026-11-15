@@ -12,6 +12,10 @@ spring:
       hibernate:
         format_sql: false
 
+app:
+  jwt:
+    secret: "your_super_secret_key_that_is_at_least_256_bits_long_for_hs256_algorithm"
+    expiration: 86400000 # 24 hours in milliseconds
 
 cloudinary:
   cloud-name: ${CLOUDINARY_CLOUD_NAME:thewalkersingh}
@@ -24,3 +28,18 @@ logging:
   level:
     com.motohive.motohiveapi: DEBUG
     org.hibernate.SQL: DEBUG
+
+components:
+  securitySchemes:
+    bearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: [ ] # use the same name as above
+
+
+motohive:
+  cors:
+    allowed-origins: http://localhost:5173

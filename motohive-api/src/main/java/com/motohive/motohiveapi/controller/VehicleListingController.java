@@ -1,5 +1,6 @@
 package com.motohive.motohiveapi.controller;
 
+import com.motohive.motohiveapi.domain.entity.User;
 import com.motohive.motohiveapi.dto.ListingSearchCriteria;
 import com.motohive.motohiveapi.dto.PageResponse;
 import com.motohive.motohiveapi.dto.VehicleListingRequest;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,8 +22,10 @@ public class VehicleListingController {
 	private final VehicleListingService listingService;
 	
 	@PostMapping
-	public ResponseEntity<VehicleListingResponse> createListing(@RequestBody VehicleListingRequest request) {
-		return ResponseEntity.ok(listingService.createListing(request));
+	public ResponseEntity<VehicleListingResponse> createListing(@RequestBody VehicleListingRequest request,
+		@AuthenticationPrincipal User currentUser) {
+		VehicleListingResponse response = listingService.createListing(request, currentUser.getId());
+		return ResponseEntity.ok(response);
 	}
 	
 	@GetMapping("/{id}")

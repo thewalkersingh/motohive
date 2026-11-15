@@ -21,6 +21,10 @@ management:
       exposure:
         include: "health,info"
 
+motohive:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:https://mymotohive.vercel.app}
+
 
 logging:
   level:

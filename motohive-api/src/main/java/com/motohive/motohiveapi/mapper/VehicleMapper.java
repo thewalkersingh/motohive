@@ -33,8 +33,8 @@ public final class VehicleMapper {
 		return new VehicleListingResponse(
 			l.getId(),
 			l.getTitle(),
-			l.getPrice()
-			, l.getMake(),
+			l.getPrice(),
+			l.getMake(),
 			l.getModel(),
 			l.getYearOfManufacture(),
 			l.getEngineCc(),

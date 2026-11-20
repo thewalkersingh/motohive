@@ -7,6 +7,9 @@ import com.motohive.motohiveapi.mapper.UserMapper;
 import com.motohive.motohiveapi.repository.UserRepository;
 import com.motohive.motohiveapi.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NonNull;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,7 +30,17 @@ public class UserServiceImpl implements UserService {
 	
 	public UserResponse getUserById(Long id) {
 		return UserMapper.mapToResponse(userRepository.findById(id)
-																	 .orElseThrow(() -> new RuntimeException("User not found")));
+																	 .orElseThrow(
+																		 () -> new RuntimeException("User not found"))
+		);
+	}
+	
+	@Override
+	public UserDetails loadUserByUsername(@NonNull String email) throws UsernameNotFoundException {
+		return userRepository.findByEmail(email)
+									.orElseThrow(
+										() -> new UsernameNotFoundException("User not found with email: " + email)
+									);
 	}
 	
 }
